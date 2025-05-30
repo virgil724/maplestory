@@ -233,7 +233,7 @@ def hex_parse(hex_string) -> ParsedData:
 def post_to_ntfy(data: ParsedData):
     import requests
 
-    url = "https://ntfy.sh/artale_maplestory"  # Replace with your ntfy topic URL
+    url = "http://192.168.1.112//artale_maplestory"  # Replace with your ntfy topic URL
     headers = {"Title": "廣播"}
     message = f"""
     Megaphone Data: {data.megaphone_data.data}
@@ -265,7 +265,7 @@ if __name__ == "__main__":
             try:
                 if len(hex_data) > 100:  # Basic length check
                     result = hex_parse(hex_data)
-                    print(f"Parsed data: {result}")
+                    print(f"Parsed data: {result.text}")
                     post_to_ntfy(result)
 
             except Exception as e:
