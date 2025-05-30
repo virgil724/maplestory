@@ -1,4 +1,6 @@
 from pydantic import BaseModel
+from scapy.all import AsyncSniffer
+import time
 
 
 class MegaphoneData(BaseModel):
@@ -68,6 +70,8 @@ def hex_parse(hex_string) -> ParsedData:
 
     # MegaphoneData 字段
     megaphone_data = data[0x006C - start : 0x0079 - start].hex()
+    if megaphone_data != "4d65676170686f6e6544617461":
+        raise ValueError("MegaphoneData field is not valid")
 
     # Channel 字段
     channel_hex = data[0x0081 - start : 0x0089 - start].hex()
@@ -226,7 +230,58 @@ def hex_parse(hex_string) -> ParsedData:
     )
 
 
+def post_to_ntfy(data: ParsedData):
+    import requests
+
+    url = "https://ntfy.sh/artale_maplestory"  # Replace with your ntfy topic URL
+    headers = {"Title": "廣播"}
+    message = f"""
+    Megaphone Data: {data.megaphone_data.data}
+    Channel: {data.channel.hex} (Value: {data.channel.value})
+    Text: {data.text.value} (Type: {data.text.type}, Length: {data.text.length})
+    Nickname: {data.nickname.value} (Field: {data.nickname.field}, Type: {data.nickname.type}, Length: {data.nickname.length})
+    Type: {data.type.value} (Field: {data.type.field}, Type: {data.type.type}, Length: {data.type.length})
+    Whisper: {data.whisper}
+    Profile Code: {data.profile_code.value} (Field: {data.profile_code.field}, Type: {data.profile_code.type}, Length: {data.profile_code.length})
+    User ID: {data.user_id.value} (Field: {data.user_id.field}, Type: {data.user_id.type}, Length: {data.user_id.length})
+    Color1: {data.color1}
+    Color2: {data.color2}
+    """
+    response = requests.post(url, data=message.encode("utf-8"))
+
+
 if __name__ == "__main__":
     hex_data = "544f5a2006010000ffffffff02060100006135f07dffffffff0098ac25cf01000000f20000800b00000000f000000016000d0000004d65676170686f6e65446174610700000000070000004368616e6e656c02e8060000000400000054657874040027000000e68891e98099e9a0bbe694b637e5bcb5e9a0ade79b94e6958fe68db73130302520e99baae694b600080000004e69636b6e616d6504000400000041746f6d000400000054797065040007000000353132303031310007000000576869737065720701000b00000050726f66696c65436f64650400050000007267663246000600000055736572496404001100000032303337323130303030353233373635330400070000002335463037333804000700000023656462306365"
     result = hex_parse(hex_data)
     print(result)
+
+    def packet_handler(packet):
+        if packet.haslayer("Raw"):
+            raw_data = packet["Raw"].load
+            hex_data = raw_data.hex()
+            # print(f"Raw packet data: {hex_data}")
+
+            # Try to parse the packet if it looks like our expected format
+            try:
+                if len(hex_data) > 100:  # Basic length check
+                    result = hex_parse(hex_data)
+                    print(f"Parsed data: {result}")
+                    post_to_ntfy(result)
+
+            except Exception as e:
+                print(f"Failed to parse packet: {e}")
+
+    t = AsyncSniffer(
+        filter="tcp port 32800",
+        prn=packet_handler,
+        store=False,
+    )
+    t.start()
+
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("\nStopping packet capture...")
+        t.stop()
+        t.join()
