@@ -260,7 +260,7 @@ def hex_parse_by_field_search(hex_string) -> ParsedData:
     channel_hex = data[channel_offset : channel_offset + 7].hex()
 
     # Channel 值在字段名稱後的固定偏移
-    ch_val_offset = channel_offset + 7 + 2  # 字段名稱 + 類型標識
+    ch_val_offset = channel_offset + 7 + 1  # 字段名稱 + 類型標識
     ch_val = data[ch_val_offset : ch_val_offset + 2].hex()
     ch_value = int.from_bytes(bytes.fromhex(ch_val), "little")
 
