@@ -461,6 +461,7 @@ dependencies = [
     { name = "pydantic" },
     { name = "requests" },
     { name = "scapy" },
+    { name = "uvicorn" },
     { name = "valkey" },
 ]
 
@@ -472,6 +473,7 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.11.5" },
     { name = "requests", specifier = ">=2.32.3" },
     { name = "scapy", specifier = ">=2.6.1" },
+    { name = "uvicorn", specifier = ">=0.34.3" },
     { name = "valkey", specifier = ">=6.1.0" },
 ]
 
