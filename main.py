@@ -53,7 +53,7 @@ async def get_pubsub_message():
                     "username": f"{json_data.get('NickName', 'Unknown')}#{json_data.get('ProfileCode', '')}",
                     "channel": json_data.get("Channel", "general"),
                     "text": json_data.get("Text", ""),
-                    "timestamp": datetime.datetime.now().isoformat(),
+                    "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 }
                 data = json.dumps(data, ensure_ascii=False)
                 yield f"event: message\ndata: {data}\n\n"
