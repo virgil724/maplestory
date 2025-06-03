@@ -1,0 +1,12 @@
+services:
+  app:
+    image: virgil246/artale-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_HOST=redis
+      - SECRET_KEY=your_secret
+  redis:
+    image: valkey/valkey:7.2.9-alpine
+    ports:
+      - "6379:6379"

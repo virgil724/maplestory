@@ -17,7 +17,7 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=getenv(
-        "CORS_ORIGINS", "https://artale_front.virgil246.com,http://localhost:3000"
+        "CORS_ORIGINS", "https://artale-front.virgil246.com,http://localhost:3000"
     ).split(","),
     allow_credentials=True,
     allow_methods=["GET", "POST", "OPTIONS"],
