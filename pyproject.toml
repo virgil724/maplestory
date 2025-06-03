@@ -10,4 +10,5 @@ dependencies = [
     "pydantic>=2.11.5",
     "requests>=2.32.3",
     "scapy>=2.6.1",
+    "valkey>=6.1.0",
 ]

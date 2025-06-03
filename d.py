@@ -1,3 +1,5 @@
+import valkey
+import json
 from pydantic import BaseModel
 from scapy.all import AsyncSniffer
 import time
@@ -413,7 +415,24 @@ def post_to_ntfy(data: ParsedData):
     response = requests.post(url, data=message.encode("utf-8"))
 
 
+def send_to_redis(data: ParsedData, r: valkey.Valkey):
+    data = {
+        "Channel": data.channel.value,
+        "NickName": data.nickname.value,
+        "Text": data.text.value,
+        "UserId": data.user_id.value,
+        "ProfileCode": data.profile_code.value,
+    }
+    print(data)
+    r.publish(
+        "artale_maplestory",
+        json.dumps(data),
+    )
+
+
 if __name__ == "__main__":
+    r = valkey.Valkey(host="localhost", port=6379, db=0)
+
     hex_data = "544f5a2006010000ffffffff02060100006135f07dffffffff0098ac25cf01000000f20000800b00000000f000000016000d0000004d65676170686f6e65446174610700000000070000004368616e6e656c02e8060000000400000054657874040027000000e68891e98099e9a0bbe694b637e5bcb5e9a0ade79b94e6958fe68db73130302520e99baae694b600080000004e69636b6e616d6504000400000041746f6d000400000054797065040007000000353132303031310007000000576869737065720701000b00000050726f66696c65436f64650400050000007267663246000600000055736572496404001100000032303337323130303030353233373635330400070000002335463037333804000700000023656462306365"
     result = hex_parse_by_field_search(hex_data)
     print(result)
@@ -429,7 +448,8 @@ if __name__ == "__main__":
                 if len(hex_data) > 100:  # Basic length check
                     result = hex_parse_by_field_search(hex_data)
                     print(f"Parsed data: {result.text}")
-                    post_to_ntfy(result)
+
+                    send_to_redis(result, r)
 
             except Exception as e:
                 print(f"Failed to parse packet: {e}")
