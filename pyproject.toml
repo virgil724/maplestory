@@ -1,0 +1,13 @@
+[project]
+name = "maplestory"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "mitmproxy>=12.1.1",
+    "psutil>=7.0.0",
+    "pydantic>=2.11.5",
+    "requests>=2.32.3",
+    "scapy>=2.6.1",
+]
