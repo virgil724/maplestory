@@ -8,7 +8,7 @@ graph TD
     
     subgraph "資料處理層"
         B[Script 封包解析器]
-        C[(Redis PubSub)]
+        C[(Redis Pub/Sub)]
     end
     
     subgraph "後端服務"
@@ -95,16 +95,16 @@ graph TD
 
 #### 解決方案
 
-##### 核心策略：Redis PubSub 作為資料中繼層
+##### 核心策略：Redis Pub/Sub 作為資料中繼層
 
 ````plaintext
 Windows VM (封包捕獲) 
     ↓ 
-Redis PubSub (資料佇列)
+Redis Pub/Sub (資料佇列)
     ↓
 FastAPI Workers (多個實例)
     ↓
-SSE 連線 (即時推送)
+Server-sent events 連線 (即時推送)
     ↓
 前端用戶 (一致的資料體驗)
 ````
