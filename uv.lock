@@ -461,6 +461,7 @@ dependencies = [
     { name = "pydantic" },
     { name = "requests" },
     { name = "scapy" },
+    { name = "sentry-sdk", extra = ["fastapi"] },
     { name = "uvicorn" },
     { name = "valkey" },
 ]
@@ -473,6 +474,7 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.11.5" },
     { name = "requests", specifier = ">=2.32.3" },
     { name = "scapy", specifier = ">=2.6.1" },
+    { name = "sentry-sdk", extras = ["fastapi"], specifier = ">=2.30.0" },
     { name = "uvicorn", specifier = ">=0.34.3" },
     { name = "valkey", specifier = ">=6.1.0" },
 ]
@@ -887,6 +889,24 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/df/2f/035d3888f26d999e9680af8c7ddb7ce4ea0fd8d0e01c000de634c22dcf13/scapy-2.6.1.tar.gz", hash = "sha256:7600d7e2383c853e5c3a6e05d37e17643beebf2b3e10d7914dffcc3bc3c6e6c5", size = 2247754 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/4b/34/8695b43af99d0c796e4b7933a0d7df8925f43a8abdd0ff0f6297beb4de3a/scapy-2.6.1-py3-none-any.whl", hash = "sha256:88a998572049b511a1f3e44f4aa7c62dd39c6ea2aa1bb58434f503956641789d", size = 2420670 },
+]
+
+[[package]]
+name = "sentry-sdk"
+version = "2.30.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "certifi" },
+    { name = "urllib3" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/04/4c/af31e0201b48469786ddeb1bf6fd3dfa3a291cc613a0fe6a60163a7535f9/sentry_sdk-2.30.0.tar.gz", hash = "sha256:436369b02afef7430efb10300a344fb61a11fe6db41c2b11f41ee037d2dd7f45", size = 326767 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5a/99/31ac6faaae33ea698086692638f58d14f121162a8db0039e68e94135e7f1/sentry_sdk-2.30.0-py2.py3-none-any.whl", hash = "sha256:59391db1550662f746ea09b483806a631c3ae38d6340804a1a4c0605044f6877", size = 343149 },
+]
+
+[package.optional-dependencies]
+fastapi = [
+    { name = "fastapi" },
 ]
 
 [[package]]

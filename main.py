@@ -2,6 +2,8 @@ import asyncio
 import datetime
 import json
 from fastapi import FastAPI, APIRouter
+import sentry_sdk
+import os
 from valkey.asyncio import Valkey
 from os import getenv
 from fastapi.responses import StreamingResponse
@@ -10,6 +12,12 @@ from fastapi.middleware.cors import CORSMiddleware
 import logging
 
 logger = logging.getLogger(__name__)
+sentry_sdk.init(
+    dsn=os.getenv("SENTRY_DSN", ""),
+    # Add data like request headers and IP for users,
+    # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+    send_default_pii=True,
+)
 
 app = FastAPI()
 # cors
@@ -27,9 +35,9 @@ app.add_middleware(
 r = Valkey(host=getenv("REDIS_HOST", "localhost"), port=6379, db=0)
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello, World!"}
+@app.get("/sentry-debug")
+async def trigger_error():
+    division_by_zero = 1 / 0
 
 
 api = APIRouter(prefix="/api", tags=["api"])
@@ -53,7 +61,9 @@ async def get_pubsub_message():
                     "username": f"{json_data.get('NickName', 'Unknown')}#{json_data.get('ProfileCode', '')}",
                     "channel": json_data.get("Channel", "general"),
                     "text": json_data.get("Text", ""),
-                    "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                    "timestamp": datetime.datetime.now(
+                        datetime.timezone.utc
+                    ).isoformat(),
                 }
                 data = json.dumps(data, ensure_ascii=False)
                 yield f"event: message\ndata: {data}\n\n"
